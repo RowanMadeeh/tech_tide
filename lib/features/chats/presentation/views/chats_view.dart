@@ -49,7 +49,7 @@ class _ChatsViewState extends State<ChatsView> {
               if (snapshot.hasData && snapshot.data != null) {
                 return ListView.separated(
                     separatorBuilder: (context, index) => const Divider(
-                          color: ColorManager.gray,
+                          color: ColorManager.lightGray,
                         ),
                     itemCount: snapshot.data?.length ?? 0,
                     itemBuilder: (context, index) {

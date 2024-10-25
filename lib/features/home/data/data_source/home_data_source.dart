@@ -34,8 +34,7 @@ class HomeDataSourceImpl implements HomeDataSource {
   Stream<List<PostResponseModel>> getTrendingPosts() {
     final query = _firebaseFirestore
         .collection(FirebaseConstants.postsKey)
-        .orderBy(FirebaseConstants.likesKey, descending: true)
-        .limit(8);
+        .orderBy(FirebaseConstants.likesKey, descending: true);
 
     final posts = _postsDataSource.getPosts(query);
 

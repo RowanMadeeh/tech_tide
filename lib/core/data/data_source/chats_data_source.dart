@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tech_tide/core/data/models/chats/chat_response_model.dart';
 import 'package:tech_tide/core/data/models/chats/chats_response_model.dart';
@@ -105,12 +107,29 @@ class ChatsDataSourceImpl implements ChatsDataSource {
         .collection(FirebaseConstants.chatsCollection)
         .doc(chatId);
 
+    final data = (await chatRef.get()).data() ?? {};
     final messageData = message.toJson();
+
     await chatRef.update({
       "messages": FieldValue.arrayUnion([messageData]),
       "LastMessage": messageData['content'],
       "LastMessageTime": messageData['sentAt'],
     });
+    final messages = data['messages'] ?? [];
+    if (messages.isEmpty) {
+      log(data.toString());
+      final participants =
+          (data['Participants'] as List).map((e) => e.toString()).toList();
+      final otherUserId = message.senderID == participants[0]
+          ? participants[1]
+          : participants[0];
+      await _firebaseFirestore
+          .collection(FirebaseConstants.usersCollection)
+          .doc(otherUserId)
+          .collection(FirebaseConstants.chatsCollection)
+          .doc(chatId)
+          .set({});
+    }
   }
 
   @override
